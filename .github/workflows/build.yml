@@ -10,8 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List repo contents (debug)
+        run: |
+          echo "Repo root:"
+          ls -la
+          echo "All zip files found:"
+          find . -iname "*.zip"
+
       - name: Unzip project
-        run: unzip -o SubtitleTranslator.zip
+        run: |
+          ZIPFILE=$(find . -maxdepth 3 -iname "*.zip" | head -n 1)
+          if [ -z "$ZIPFILE" ]; then
+            echo "No zip file found in repo!"
+            exit 1
+          fi
+          echo "Unzipping $ZIPFILE"
+          unzip -o "$ZIPFILE"
 
       - uses: actions/setup-java@v4
         with:
